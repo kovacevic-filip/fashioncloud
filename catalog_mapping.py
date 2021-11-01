@@ -119,16 +119,16 @@ def _add_variation_data(catalog_data: dict, row: Dict[str, str]) -> dict:
 
 
 # first task from Bonus points section
-def merge_custom_columns(columns_to_merge_name: List[str], merged_column_name: str, values_csv: List[Dict[str, str]])\
+def merge_custom_columns(columns_to_merge_name: List[str], merged_column_name: str, values_data: List[Dict[str, str]])\
         -> List[Dict[str, str]]:
-    values_csv = copy.deepcopy(values_csv)
-    for row in values_csv:
+    values_data = copy.deepcopy(values_data)
+    for row in values_data:
         merged_column_values = [f"{row[column_name]}" for column_name in columns_to_merge_name]
         row[merged_column_name] = ' '.join(merged_column_values)
         for merge_column_name in columns_to_merge_name:
             del row[merge_column_name]
 
-    return price_values
+    return values_data
 
 
 def main():
