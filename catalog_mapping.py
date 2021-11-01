@@ -5,19 +5,25 @@ from typing import List, Dict, Tuple, Union
 
 
 def load_data() -> Tuple[List[Dict[str, str]], List[Dict[str, str]]]:
-    with open("/home/filip/projects/fashioncloud/pricat.csv", newline="") as csvfile:
-        reader = csv.DictReader(csvfile, delimiter=";")
-        price_values = []
-        for row in reader:
-            price_values.append(row)
+    price_values = []
+    mapping_values = []
+    try:
+        with open("/home/filip/projects/fashioncloud/pricat.csv", newline="") as csvfile:
+            reader = csv.DictReader(csvfile, delimiter=";")
+            for row in reader:
+                price_values.append(row)
+    except FileNotFoundError:
+        print("Please specify path to pricat.csv file")
 
-    with open("/home/filip/projects/fashioncloud/mappings.csv", newline="") as csvfile:
-        reader = csv.DictReader(csvfile, delimiter=";")
-        mapping_values = []
-        for row in reader:
-            mapping_values.append(row)
+    try:
+        with open("/home/filip/projects/fashioncloud/mappings.csv", newline="") as csvfile:
+            reader = csv.DictReader(csvfile, delimiter=";")
+            for row in reader:
+                mapping_values.append(row)
+    except FileNotFoundError:
+        print("Please specify path to mappings.csv file")
 
-    return price_values, mapping_values
+    return (price_values, mapping_values) if price_values and mapping_values else (None, None)
 
 
 def _create_mapping_dict(mapping_values: List[Dict[str, str]]) -> Dict[str, dict]:
@@ -133,13 +139,14 @@ def merge_custom_columns(columns_to_merge_name: List[str], merged_column_name: s
 
 def main():
     price_values, mapping_values = load_data()
-    mapping_values = _create_mapping_dict(mapping_values)
-    grouped_data = merge_columns(price_values, mapping_values)
-    mapped_data = map_data(grouped_data, mapping_values)
-    catalog_data = create_catalog_data(mapped_data)
+    if price_values and mapping_values:
+        mapping_values = _create_mapping_dict(mapping_values)
+        grouped_data = merge_columns(price_values, mapping_values)
+        mapped_data = map_data(grouped_data, mapping_values)
+        catalog_data = create_catalog_data(mapped_data)
 
-    with open("/home/filip/projects/fashioncloud/json_values.json", "w") as json_file:
-        json.dump(catalog_data, json_file)
+        with open("/home/filip/projects/fashioncloud/json_values.json", "w") as json_file:
+            json.dump(catalog_data, json_file)
 
 
 if __name__ == "__main__":
