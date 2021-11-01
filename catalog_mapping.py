@@ -1,7 +1,7 @@
 import csv
 import copy
 import json
-from typing import List, Dict, Tuple
+from typing import List, Dict, Tuple, Union
 
 
 def load_data() -> Tuple[List[Dict[str, str]], List[Dict[str, str]]]:
@@ -31,12 +31,21 @@ def _create_mapping_dict(mapping_values: List[Dict[str, str]]) -> Dict[str, dict
     return mapping_data
 
 
-def merge_columns(price_values: List[Dict[str, str]]) -> List[Dict[str, str]]:
+def merge_columns(price_values: List[Dict[str, str]], mapping_values: Dict[str, Union[str, dict]]) -> List[Dict[str, str]]:
     price_values = copy.deepcopy(price_values)
-    for row in price_values:
-        row['size_group_code|size_code'] = f"{row['size_group_code']}|{row['size_code']}"
-        del row['size_group_code']
-        del row['size_code']
+    merging_columns = []
+    for key in mapping_values.keys():
+        if '|' in key:
+            merging_columns.append(key)
+
+    if merging_columns:
+        for row in price_values:
+            for merged_columns_name in merging_columns:
+                columns = merged_columns_name.split('|')
+                merged_column_values = [row[column_name] for column_name in columns]
+                row[merged_columns_name] = '|'.join(merged_column_values)
+                for column_name in columns:
+                    del row[column_name]
 
     return price_values
 
@@ -124,7 +133,7 @@ def additional_option(columns_to_merge_name: List[str], merged_column_name: str,
 def main():
     price_values, mapping_values = load_data()
     mapping_values = _create_mapping_dict(mapping_values)
-    grouped_data = merge_columns(price_values)
+    grouped_data = merge_columns(price_values, mapping_values)
     mapped_data = map_data(grouped_data, mapping_values)
     catalog_data = create_catalog_data(mapped_data)
 
