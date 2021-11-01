@@ -1,52 +1,10 @@
 import csv
 import copy
 import json
-from typing import List, Dict
+from typing import List, Dict, Tuple
 
 
-MAPPING_VALUES = {
-    "season": {
-        "name": "season",
-        "winter": "Winter",
-        "summer": "Summer"
-    },
-    "collection": {
-        "name": "collection",
-        "NW 17-18": "Winter Collection 2017/2018"
-    },
-    "article_structure_code": {
-        "name": "article_structure",
-        "4": "Boot",
-        "5": "Sneaker",
-        "6": "Slipper",
-        "7": "Loafer",
-        "8": "Mocassin",
-        "9": "Sandal",
-        "10": "Pump"
-    },
-    "size_group_code|size_code": {
-        "name": "size",
-        "EU|36": "European size 36",
-        "EU|37": "European size 37",
-        "EU|38": "European size 38",
-        "EU|39": "European size 39",
-        "EU|40": "European size 40",
-        "EU|41": "European size 41",
-        "EU|42": "European size 42",
-    },
-    "color_code": {
-        "name": "color",
-        "1": "Nero",
-        "2": "Marrone",
-        "3": "Brandy Nero",
-        "4": "Indaco Nero",
-        "5": "Fucile",
-        "6": "Bosco Nero"
-    }
-}
-
-
-def load_data() -> tuple[List[Dict[str, str]], List[Dict[str, str]]]:
+def load_data() -> Tuple[List[Dict[str, str]], List[Dict[str, str]]]:
     with open("/home/filip/projects/fashioncloud/pricat.csv", newline="") as csvfile:
         reader = csv.DictReader(csvfile, delimiter=";")
         price_values = []
@@ -83,16 +41,16 @@ def merge_columns(price_values: List[Dict[str, str]]) -> List[Dict[str, str]]:
     return price_values
 
 
-def map_data(grouped_data: List[Dict[str, str]]) -> List[Dict[str, str]]:
+def map_data(grouped_data: List[Dict[str, str]], mapping_values: Dict[str, dict]) -> List[Dict[str, str]]:
     mapped_data = []
     for row in grouped_data:
         mapped_row = {}
         for key, value in row.items():
             if not value:
                 continue
-            if key in MAPPING_VALUES.keys():
-                column_name = MAPPING_VALUES[key]['name']
-                column_value = MAPPING_VALUES[key][value]
+            if key in mapping_values.keys():
+                column_name = mapping_values[key]['name']
+                column_value = mapping_values[key][value]
                 mapped_row[column_name] = column_value
             else:
                 mapped_row[key] = value
@@ -153,7 +111,7 @@ def main():
     price_values, mapping_values = load_data()
     mapping_values = _create_mapping_dict(mapping_values)
     grouped_data = merge_columns(price_values)
-    mapped_data = map_data(grouped_data)
+    mapped_data = map_data(grouped_data, mapping_values)
     catalog_data = create_catalog_data(mapped_data)
 
     with open("/home/filip/projects/fashioncloud/json_values.json", "w") as json_file:
