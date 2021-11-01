@@ -74,23 +74,37 @@ def create_catalog_data(mapped_data: List[Dict[str, str]]) -> dict:
         catalog_data['collection'] = row['collection']
         catalog_data['season'] = row['season']
         if not row['article_number'] in catalog_data['article'].keys():
-            catalog_data['article'][row['article_number']] = {}
-            catalog_data['article'][row['article_number']]['article_structure'] = row['article_structure']
-            catalog_data['article'][row['article_number']]['article_number_2'] = row['article_number_2']
-            catalog_data['article'][row['article_number']]['article_number_3'] = row['article_number_3']
-            catalog_data['article'][row['article_number']]['target_area'] = row['target_area']
-            catalog_data['article'][row['article_number']]['variation'] = {}
+            catalog_data = _add_article_data(catalog_data, row)
         if row['ean'] in catalog_data['article'][row['article_number']]['variation'].keys():
             continue
         else:
-            catalog_data['article'][row['article_number']]['variation'][row['ean']] = {}
-            catalog_data['article'][row['article_number']]['variation'][row['ean']]['color'] = row['color']
-            catalog_data['article'][row['article_number']]['variation'][row['ean']]['size'] = row['size']
-            catalog_data['article'][row['article_number']]['variation'][row['ean']]['size_name'] = row['size_name']
-            catalog_data['article'][row['article_number']]['variation'][row['ean']]['currency'] = row['currency']
-            catalog_data['article'][row['article_number']]['variation'][row['ean']]['price_buy_net'] = row['price_buy_net']
-            catalog_data['article'][row['article_number']]['variation'][row['ean']]['price_sell'] = row['price_sell']
-            catalog_data['article'][row['article_number']]['variation'][row['ean']]['material'] = row['material']
+            catalog_data = _add_variation_data(catalog_data, row)
+
+    return catalog_data
+
+
+def _add_article_data(catalog_data: dict, row: Dict[str, str]) -> dict:
+    catalog_data = copy.deepcopy(catalog_data)
+    catalog_data['article'][row['article_number']] = {}
+    catalog_data['article'][row['article_number']]['article_structure'] = row['article_structure']
+    catalog_data['article'][row['article_number']]['article_number_2'] = row['article_number_2']
+    catalog_data['article'][row['article_number']]['article_number_3'] = row['article_number_3']
+    catalog_data['article'][row['article_number']]['target_area'] = row['target_area']
+    catalog_data['article'][row['article_number']]['variation'] = {}
+
+    return catalog_data
+
+
+def _add_variation_data(catalog_data: dict, row: Dict[str, str]) -> dict:
+    catalog_data = copy.deepcopy(catalog_data)
+    catalog_data['article'][row['article_number']]['variation'][row['ean']] = {}
+    catalog_data['article'][row['article_number']]['variation'][row['ean']]['color'] = row['color']
+    catalog_data['article'][row['article_number']]['variation'][row['ean']]['size'] = row['size']
+    catalog_data['article'][row['article_number']]['variation'][row['ean']]['size_name'] = row['size_name']
+    catalog_data['article'][row['article_number']]['variation'][row['ean']]['currency'] = row['currency']
+    catalog_data['article'][row['article_number']]['variation'][row['ean']]['price_buy_net'] = row['price_buy_net']
+    catalog_data['article'][row['article_number']]['variation'][row['ean']]['price_sell'] = row['price_sell']
+    catalog_data['article'][row['article_number']]['variation'][row['ean']]['material'] = row['material']
 
     return catalog_data
 
