@@ -68,7 +68,7 @@ def map_data(grouped_data: List[Dict[str, str]], mapping_values: Dict[str, dict]
     return mapped_data
 
 
-def create_catalog_data(mapped_data: List[Dict[str, str]]) -> dict:
+def create_catalog_data(mapped_data: List[Dict[str, str]]) -> Dict[str, Union[str, dict]]:
     catalog_data = {
         "brand": "",
         "supplier": "",
