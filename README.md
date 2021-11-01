@@ -1,4 +1,4 @@
-Solution to the task is written in functions. It can be run by writing `python catalog_mapping`. I have used functions for fast implementation, although there are other possible solutions like using objects. Where methods on each object would enable the specific object to check whether data it received are correct as well as to clean specific data (strip on string, check for some illogic data...).
+Solution to the task is written in functions. It can be run by writing `python3 catalog_mapping`. I have used functions for fast implementation, although there are other possible solutions like using objects. Where methods on each object would enable the specific object to check whether data it received are correct as well as to clean specific data (strip on string, check for some illogic data...).
 The code is written for specific usecase that is given in examples. 
 
 To load csv files, you will need to write path to `price.csv` and `mapping.csv` files in `load_data` function.
